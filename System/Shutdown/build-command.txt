@@ -1,0 +1,1 @@
+pyinstaller --onefile --console --icon=shutdown.ico .\system_shutdown.py
