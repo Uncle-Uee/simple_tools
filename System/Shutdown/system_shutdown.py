@@ -1,5 +1,7 @@
 """
 Created By: Ubaidullah Effendi-Emjedi
+GitHub: https://github.com/Uncle-Uee
+LinkedIn: https://www.linkedin.com/in/ubaidullah-effendi-emjedi-202494183/
 
 Icon By: "https://icons8.com"
 """
