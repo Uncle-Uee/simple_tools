@@ -12,7 +12,7 @@ import os
 from PIL import Image
 
 
-def extract(images = []):
+def extract(images=[]):
     """
     Extract Frames from a GIF
     :return:
@@ -42,7 +42,7 @@ def runtime():
             list_of_files += [os.path.join(directory_path, file) for file in filenames if ".gif" in file]
         extract(list_of_files)
     else:
-        extract(images = list(file for file in os.listdir(os.curdir) if ".gif" in os.path.splitext(file)[1]))
+        extract(images=list(file for file in os.listdir(os.curdir) if ".gif" in os.path.splitext(file)[1]))
 
 
 if __name__ == "__main__":
