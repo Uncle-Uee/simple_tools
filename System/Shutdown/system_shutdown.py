@@ -15,34 +15,24 @@ HOURS_SYMBOL = 'h'
 MINUTES_SYMBOL = 'm'
 SECONDS_SYMBOL = 's'
 
+ABORT_ACTION = "-a"
+
 SPLIT_BY_SYMBOL = ':'
 EMPTY_STRING = ""
 
-ABORT_ACTION = "-1"
 
-
-def shutdown(seconds: int = 0):
-    """
-    Shutdown Computer
-    :param hours:
-    :return:
-    """
-    if seconds > TEN_SECONDS:
-        os.system(f"shutdown /s /t {seconds}")
-        __seconds_to_time_string(seconds)
-    else:
-        os.system(f"shutdown /s /t {SIXTY_SECONDS}")
-        __seconds_to_time_string(SIXTY_SECONDS)
+def shutdown(seconds: int = 0, instruction: str = "/s"):
+    os.system(f"shutdown {instruction} /t {seconds if seconds > TEN_SECONDS else SIXTY_SECONDS}")
+    __seconds_to_time_string(seconds)
 
 
 def abort_shutdown():
-    """
-    Abort Shutdown
-    :return:
-    """
     os.system("shutdown /a")
     print("Operation Aborted!\n")
-    return
+
+
+def get_shutdown_command(time_string=""):
+    return time_string[:-3], time_string[-2:]
 
 
 def get_total_seconds(time_string=""):
@@ -51,8 +41,8 @@ def get_total_seconds(time_string=""):
 
 
 def validate_string(time_string=""):
-    pattern = r'(\d+?(:\d|h|m|s))?((\d+?(:\d|h|m|s))|([:](\d+?(:\d|h|m|s)))*)'
-    return bool(re.fullmatch(pattern=pattern, string=time_string)) and time_string is not EMPTY_STRING
+    pattern = r'(\d+?(:\d|h|m|s))?((\d+?(:\d|h|m|s))|([:](\d+?(:\d|h|m|s)))*)?(\s[/]s|\s[/]r)'
+    return bool(re.fullmatch(pattern=pattern, string=time_string)) or not (time_string is not EMPTY_STRING)
 
 
 def __seconds_to_time_string(seconds):
@@ -100,22 +90,28 @@ def __get_seconds(seconds=""):
     return int(seconds[:-1]) if SECONDS_SYMBOL in seconds else 0
 
 
-def runtime():
+def __instructions():
     print("""
-    You are required to enter a time string before your computer will shutdown. 
-    A valid time string is made up of the following: 
-    xh, where x is a value in hours, or
-    xm, where x is a value in minutes, or
-    xs, where x is a value in seconds or
-    You can enter either one or combination of each.
-    For example, inputting 1h:1m:1s is equivalent to 1 hour 1 min and 1 sec, which is 3661 seconds.
-    If you enter -1 hours, a Previous Shutdown Schedule will be aborted and/or the program will end!
-        """)
+        You are required to enter a time string before your computer will shutdown or restart. 
+        A valid time string is made up of the following: 
+        xh, where x is a value in hours, or
+        xm, where x is a value in minutes, or
+        xs, where x is a value in seconds or
+        You can enter either one or combination of each separated by a ':'.
+        Your valid time string needs to end in a '/s' (shutdown) or a '/r' (restart)
+        For example, the input '1h:1m:1s /s' the computer will shutdown in 1 hour 1 min and 1 sec, which is 3661 seconds.
+        If you enter -a, a Previous Schedule will be aborted and/or the program will end!
+            """)
+
+
+def runtime():
+    __instructions()
     try:
         time_string = input("Enter a Valid Time String: ")
         if validate_string(time_string):
+            time_string, instruction = get_shutdown_command(time_string)
             total_seconds = get_total_seconds(time_string)
-            shutdown(total_seconds)
+            shutdown(total_seconds, instruction)
         elif time_string == ABORT_ACTION:
             abort_shutdown()
         else:
